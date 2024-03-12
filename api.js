@@ -4,17 +4,18 @@ require('dotenv').config();
 const jwt = require('jsonwebtoken');
 const axios = require('axios');
 
-const PORT = process.env.PORT || 3030;
+const PORT = process.env.PORT || 8080;
 
 const app = express();
 app.use(cors());
 app.use(express.json());
-
 async function sendOrderConfirmationEmail(emailAddress, orderData) {
     const subject = 'Your Order Details';
-    let body = `Your order has been processed. Details: ${JSON.stringify(orderData)}\n`;
-    orderData.products.forEach(product => {
-        body += `${product.name}: ${product.quantity}\n`;
+    let body = `Your order has been processed. Details:\n`;
+
+    // Iterate through each row in orderData.rows
+    orderData.rows.forEach(row => {
+        body += `${row.product.name}: ${row.quantity}\n`; // Assuming product name and quantity are available
     });
 
     const sendgridUrl = 'https://api.sendgrid.com/v3/mail/send';
@@ -56,6 +57,7 @@ async function sendOrderConfirmationEmail(emailAddress, orderData) {
         throw errorResponse; // Throw the error response
     }
 }
+
 
 
 
